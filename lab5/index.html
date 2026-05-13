@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторна №5</title>
+    <style>
+        body { font-family: Arial; text-align: center; }
+
+        .lamp {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: gray;
+            margin: 20px auto;
+        }
+        .on { background: yellow; }
+        .off { background: gray; }
+
+        .traffic { width: 80px; margin: 20px auto; }
+        .light {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #333;
+            margin: 10px auto;
+        }
+        .red.active { background: red; }
+        .yellow.active { background: yellow; }
+        .green.active { background: green; }
+
+        ul { list-style: none; padding: 0; }
+        li { margin: 5px; padding: 5px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+
+<h1>Лабораторна №5</h1>
+
+<h2>Лампочка</h2>
+<div id="lamp" class="lamp off"></div>
+<button onclick="toggleLamp()">Вкл / Викл</button>
+<button onclick="setBrightness()">Яскравість</button>
+
+<h2>Світлофор</h2>
+<div class="traffic">
+    <div id="red" class="light red"></div>
+    <div id="yellow" class="light yellow"></div>
+    <div id="green" class="light green"></div>
+</div>
+<button onclick="startTraffic()">Старт</button>
+<button onclick="nextLight()">Наступний</button>
+
+<h2>Годинник</h2>
+<div id="clock"></div>
+
+<h2>Таймер</h2>
+<input type="datetime-local" id="targetDate">
+<button onclick="startCountdown()">Старт</button>
+<div id="countdown"></div>
+
+<h2>До дня народження</h2>
+<input type="date" id="birthday">
+<button onclick="calcBirthday()">Порахувати</button>
+<div id="birthdayResult"></div>
+
+<h2>Магазин</h2>
+<input id="name" placeholder="Назва">
+<input id="price" placeholder="Ціна">
+<input id="qty" placeholder="Кількість">
+<input id="category" placeholder="Категорія">
+
+<button onclick="addProduct()">Додати</button>
+
+<h3>Товари</h3>
+<ul id="products"></ul>
+
+<h3>Категорії</h3>
+<ul id="categories"></ul>
+
+<script src="script.js"></script>
+</body>
+</html>

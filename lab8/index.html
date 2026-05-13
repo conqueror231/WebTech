@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Memory Game</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: sans-serif; background: #111; color: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+  header { width: 100%; padding: 12px 20px; background: #1a1a2e; display: flex; justify-content: space-between; align-items: center; }
+  .wrap { display: flex; gap: 16px; padding: 16px; width: 100%; max-width: 1000px; align-items: flex-start; }
+  .panel { background: #1a1a2e; border-radius: 10px; padding: 16px; width: 240px; flex-shrink: 0; }
+  .panel label { display: block; font-size: 0.75rem; color: #aaa; margin: 10px 0 4px; text-transform: uppercase; }
+  .panel select, .panel input { width: 100%; background: #111; border: 1px solid #333; border-radius: 6px; color: #fff; padding: 6px 10px; font-size: 0.9rem; }
+  .rg { display: flex; gap: 6px; }
+  .rb, .db { flex: 1; text-align: center; padding: 6px; border-radius: 6px; border: 1px solid #333; cursor: pointer; font-size: 0.8rem; font-weight: 700; }
+  .rb.active { background: #4d96ff; border-color: #4d96ff; }
+  .db[data-d="easy"].active { background: #6bcb77; border-color: #6bcb77; color: #000; }
+  .db[data-d="normal"].active { background: #ffd93d; border-color: #ffd93d; color: #000; }
+  .db[data-d="hard"].active { background: #ff6b6b; border-color: #ff6b6b; }
+  button { width: 100%; padding: 9px; border-radius: 6px; border: none; cursor: pointer; font-weight: 700; font-size: 0.9rem; margin-top: 8px; color: #fff; }
+  .b1 { background: #4d96ff; }
+  .b2 { background: #333; color: #aaa; }
+  .b3 { background: #ff6b6b; }
+  .game { flex: 1; }
+  .stats { display: none; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .sb { background: #1a1a2e; border-radius: 8px; padding: 8px 14px; text-align: center; flex: 1; }
+  .sb .v { font-size: 1.3rem; font-weight: 900; color: #ffd93d; }
+  .sb .l { font-size: 0.7rem; color: #aaa; text-transform: uppercase; }
+  .sb.warn .v { color: #ff6b6b; animation: pulse 0.5s infinite alternate; }
+  @keyframes pulse { to { opacity: 0.4; } }
+  .turns { display: none; gap: 10px; margin-bottom: 12px; }
+  .pt { flex: 1; padding: 8px; border-radius: 8px; border: 2px solid #333; text-align: center; font-weight: 700; font-size: 0.85rem; color: #777; }
+  .pt.active { border-color: #4d96ff; color: #fff; background: rgba(77,150,255,0.1); }
+  .pt .ps { font-size: 1.1rem; color: #6bcb77; margin-top: 2px; }
+  .grid { display: grid; gap: 8px; }
+  .card { aspect-ratio: 1; cursor: pointer; perspective: 600px; }
+  .ci { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.4s; border-radius: 10px; }
+  .card.flipped .ci, .card.matched .ci { transform: rotateY(180deg); }
+  .cf { position: absolute; inset: 0; border-radius: 10px; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+  .cb { background: #2d2b45; border: 2px solid #3d3b55; }
+  .cb::after { content: '?'; font-weight: 900; color: #3d3b55; }
+  .cf2 { background: #1a1a2e; border: 2px solid #3d3b55; transform: rotateY(180deg); }
+  .card.matched .cf2 { border-color: #6bcb77; background: rgba(107,203,119,0.1); }
+  .card.matched .ci { animation: pop 0.4s ease; }
+  @keyframes pop { 50% { transform: rotateY(180deg) scale(1.12); } }
+  .card.wrong .ci { animation: shake 0.4s ease; }
+  @keyframes shake { 25% { transform: rotateY(180deg) translateX(-6px); } 75% { transform: rotateY(180deg) translateX(6px); } }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; }
+  .overlay.show { display: flex; }
+  .modal { background: #1a1a2e; border-radius: 16px; padding: 32px; max-width: 420px; width: 90%; text-align: center; animation: mi 0.3s ease; }
+  @keyframes mi { from { transform: scale(0.8); opacity: 0; } }
+  .modal h2 { font-size: 1.8rem; margin-bottom: 10px; }
+  .modal p { color: #aaa; margin-bottom: 8px; }
+  .rs { background: #111; border-radius: 8px; padding: 12px; margin: 12px 0; text-align: left; }
+  .rr { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #222; font-size: 0.85rem; }
+  .rr:last-child { border: none; }
+  .mbtns { display: flex; gap: 8px; margin-top: 14px; }
+  .start { display: flex; align-items: center; justify-content: center; min-height: 260px; color: #555; font-size: 1rem; flex-direction: column; gap: 10px; }
+  @media(max-width:600px) { .wrap { flex-direction: column; } .panel { width: 100%; } }
+</style>
+</head>
+<body>
+<header>
+  <b>🃏 Memory Game</b>
+  <span id="hdr" style="color:#aaa;font-size:0.85rem;"></span>
+</header>
+
+<div class="wrap">
+  <div class="panel">
+    <label>Гравці</label>
+    <div class="rg" id="pgr">
+      <div class="rb active" data-val="1">1 гравець</div>
+      <div class="rb" data-val="2">2 гравці</div>
+    </div>
+    <label>Ім'я гравця 1</label>
+    <input id="p1" value="Гравець 1">
+    <input id="p2" value="Гравець 2" style="display:none;margin-top:6px;">
+    <label>Розмір поля</label>
+    <select id="gs">
+      <option value="4x4">4×4 (8 пар)</option>
+      <option value="4x5">4×5 (10 пар)</option>
+      <option value="4x6">4×6 (12 пар)</option>
+      <option value="5x6">5×6 (15 пар)</option>
+      <option value="6x6">6×6 (18 пар)</option>
+    </select>
+    <label>Складність</label>
+    <div class="rg">
+      <div class="db active" data-d="easy">Easy<br><small>3хв</small></div>
+      <div class="db" data-d="normal">Normal<br><small>2хв</small></div>
+      <div class="db" data-d="hard">Hard<br><small>1хв</small></div>
+    </div>
+    <label>Раундів</label>
+    <input id="rc" type="number" value="1" min="1" max="10">
+    <button class="b1" onclick="startGame()">▶ Розпочати</button>
+    <button class="b2" onclick="resetSettings()">↺ Скинути</button>
+    <button class="b3" onclick="restartGame()">⟳ Рестарт</button>
+  </div>
+
+  <div class="game">
+    <div class="stats" id="stats">
+      <div class="sb"><div class="v" id="sM">0</div><div class="l">Ходи</div></div>
+      <div class="sb" id="tbox"><div class="v" id="sT">--:--</div><div class="l">Час</div></div>
+      <div class="sb"><div class="v" id="sP">0</div><div class="l">Пари</div></div>
+      <div class="sb"><div class="v" id="sR">1/1</div><div class="l">Раунд</div></div>
+    </div>
+    <div class="turns" id="turns">
+      <div class="pt active" id="pt1"><div id="pn1">Гравець 1</div><div class="ps" id="ps1">0 пар</div></div>
+      <div class="pt" id="pt2" style="display:none;"><div id="pn2">Гравець 2</div><div class="ps" id="ps2">0 пар</div></div>
+    </div>
+    <div id="grid" class="grid">
+      <div class="start"><div style="font-size:3rem">🎴</div>Налаштуйте гру та натисніть <b>«Розпочати»</b></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ov">
+  <div class="modal">
+    <h2 id="mTitle"></h2>
+    <p id="mSub"></p>
+    <div class="rs" id="mStats"></div>
+    <div class="mbtns">
+      <button class="b1" style="flex:1" id="mNext" onclick="nextRound()"></button>
+      <button class="b2" style="flex:1" onclick="closeModal()">Закрити</button>
+    </div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

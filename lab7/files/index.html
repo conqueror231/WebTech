@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wild Gunman</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- МЕНЮ -->
+  <div id="menu" class="screen">
+    <h1 class="menu-title">🤠 Wild<br>Gunman</h1>
+    <button id="btn-start" class="btn">PLAY</button>
+  </div>
+
+  <!-- ЕКРАН ГРИ -->
+  <div id="game" class="screen hidden">
+
+    <!-- Панель зверху -->
+    <div id="top-panel">
+      <div id="timer-display">
+        <div>YOU: <span id="you-time">—</span></div>
+        <div>GUNMAN: <span id="gun-time">—</span></div>
+      </div>
+      <div id="level-display">LEVEL <span id="level-num">1</span></div>
+      <div id="score-display">$ <span id="score-num">0</span></div>
+    </div>
+
+    <!-- Ігрове поле -->
+    <div id="field">
+      <!-- Фон -->
+      <img id="bg" src="img/bg.png" alt="background"/>
+
+      <!-- Персонаж-гансмен (клікабельний прямокутник) -->
+      <div id="gunman">
+        <div id="gunman-body">🤠</div>
+      </div>
+
+      <!-- Повідомлення FIRE -->
+      <div id="msg-fire" class="msg hidden">
+        <img src="img/fire-right.png" alt="FIRE!"/>
+      </div>
+
+      <!-- Повідомлення результату -->
+      <div id="msg-result" class="msg msg-result hidden"></div>
+
+      <!-- Прицільник (курсор) -->
+      <div id="crosshair"></div>
+    </div>
+
+    <!-- Панель знизу -->
+    <div id="bottom-panel">
+      <button id="btn-restart" class="btn hidden">RESTART</button>
+      <button id="btn-next" class="btn hidden">NEXT LEVEL</button>
+    </div>
+
+  </div>
+
+  <!-- ЕКРАН КІНЦЯ ГРИ -->
+  <div id="gameover" class="screen hidden">
+    <h2 class="menu-title">GAME<br>OVER</h2>
+    <p id="final-score">You earned: $<span id="final-num">0</span></p>
+    <button id="btn-again" class="btn">PLAY AGAIN</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

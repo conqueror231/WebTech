@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Список товарів</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Магазин товарів</h1>
+    <div id="total-price">Загальна вартість: <span id="total-value">0</span> грн</div>
+  </header>
+
+  <main>
+
+    <!-- nav — бо це навігація/фільтрація по категоріям -->
+    <nav id="filter-section" aria-label="Фільтр за категорією">
+      <strong>Фільтр за категорією:</strong>
+      <div id="filter-buttons" role="group"></div>
+    </nav>
+
+    <!-- div — бо це панель керування, не самостійна секція контенту -->
+    <div id="sort-section" role="group" aria-label="Сортування товарів">
+      <strong>Сортування:</strong>
+      <button onclick="handleSort('price')">За ціною</button>
+      <button onclick="handleSort('createdAt')">За датою створення</button>
+      <button onclick="handleSort('updatedAt')">За датою оновлення</button>
+      <button onclick="handleSort(null)">Скинути сортування</button>
+    </div>
+
+    <!-- section — бо це основний змістовий блок сторінки -->
+    <section id="product-list-section" aria-label="Список товарів">
+      <p id="empty-message">Наразі список товарів пустий. Додайте новий товар.</p>
+      <ul id="product-list" aria-live="polite"></ul>
+      <button id="add-btn" onclick="openAddModal()">Додати новий товар</button>
+    </section>
+
+  </main>
+
+  <!-- role="dialog" — семантична роль модального вікна -->
+  <div id="modal-overlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div id="modal">
+      <h2 id="modal-title">Додати товар</h2>
+
+      <!-- novalidate ПРИБРАНО — браузер сам показує HTML5-помилки -->
+      <form id="product-form">
+        <input type="hidden" id="edit-id" />
+
+        <label for="field-name">Назва товару:</label>
+        <input type="text" id="field-name" name="name" required minlength="2" placeholder="Назва" />
+
+        <label for="field-price">Ціна (грн):</label>
+        <input type="number" id="field-price" name="price" required min="0.01" step="0.01" placeholder="100.00" />
+
+        <label for="field-category">Категорія:</label>
+        <select id="field-category" name="category" required>
+          <option value="">-- Оберіть категорію --</option>
+          <option value="Електроніка">Електроніка</option>
+          <option value="Одяг">Одяг</option>
+          <option value="Продукти">Продукти</option>
+          <option value="Меблі">Меблі</option>
+        </select>
+
+        <label for="field-image">URL зображення:</label>
+        <input type="url" id="field-image" name="image" required placeholder="https://..." />
+
+        <div id="form-error" class="error-msg" role="alert"></div>
+
+        <div class="modal-buttons">
+          <button type="submit">Зберегти</button>
+          <button type="button" onclick="closeModal()">Скасувати</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="snackbar" class="hidden" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

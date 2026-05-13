@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To-Do List</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Список завдань</h1>
+  </header>
+
+  <main>
+
+    <!-- Форма додавання нового завдання -->
+    <section id="add-section">
+      <form id="add-form" novalidate>
+        <input
+          type="text"
+          id="new-task-input"
+          placeholder="Введіть нове завдання..."
+          required
+          minlength="2"
+        />
+        <button type="submit">Додати</button>
+      </form>
+      <p id="add-error" class="error-msg"></p>
+    </section>
+
+    <!-- Блок сортування -->
+    <section id="sort-section">
+      <strong>Сортування:</strong>
+      <button onclick="handleSort('createdAt')">За датою додавання</button>
+      <button onclick="handleSort('done')">За виконанням</button>
+      <button onclick="handleSort('updatedAt')">За датою оновлення</button>
+      <button onclick="handleSort(null)">Скинути</button>
+    </section>
+
+    <!-- Список завдань -->
+    <ul id="task-list"></ul>
+    <p id="empty-msg">Завдань поки немає. Додайте перше!</p>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
